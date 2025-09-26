@@ -24,7 +24,7 @@ export default function CandidatePage() {
     }
   };
 
-  const handleJoinRoom = async () => {
+  const handleJoinRoom = () => {
     setJoining(true);
     setErrors({});
 
@@ -43,33 +43,14 @@ export default function CandidatePage() {
       return;
     }
 
-    try {
-      const response = await fetch('/api/sessions/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          roomId: formData.roomId.toUpperCase(),
-          candidateName: formData.name,
-          candidateEmail: formData.email
-        }),
-      });
+    // ✅ Directly redirect to candidate room without session API
+    router.push(
+      `/candidate/${formData.roomId.toUpperCase()}?name=${encodeURIComponent(
+        formData.name
+      )}&email=${encodeURIComponent(formData.email)}`
+    );
 
-      const result = await response.json();
-
-      if (result.success) {
-        // Redirect to candidate room
-        router.push(`/candidate/${formData.roomId.toUpperCase()}?name=${encodeURIComponent(formData.name)}&email=${encodeURIComponent(formData.email)}&sessionId=${result.data.sessionId}`);
-      } else {
-        setErrors({ api: result.error || 'Failed to join room' });
-      }
-    } catch (error) {
-      console.error('Room join failed:', error);
-      setErrors({ api: 'Network error. Please try again.' });
-    } finally {
-      setJoining(false);
-    }
+    setJoining(false);
   };
 
   return (

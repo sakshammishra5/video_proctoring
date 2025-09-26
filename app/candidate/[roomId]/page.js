@@ -1,47 +1,25 @@
 'use client';
-
 import { useParams, useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
-import ProctoringVideoRoom from '../../../components/video/ProctoringVideoRoom';
-
-function CandidateRoomContent() {
-  const params = useParams();
-  const searchParams = useSearchParams();
-  
-  const roomId = params.roomId;
-  const name = searchParams.get('name');
-  const email = searchParams.get('email');
-  const sessionId = searchParams.get('sessionId');
-
-  const userData = {
-    name: name || 'Candidate',
-    email: email || '',
-    sessionId: sessionId || '',
-    userType: 'candidate'
-  };
-
-  return (
-    <div className="h-screen">
-      <ProctoringVideoRoom
-        roomId={roomId}
-        userType="candidate"
-        userData={userData}
-      />
-    </div>
-  );
-}
+import JitsiMeet from '@/app/components/Jitsi/JitsiMeet';
+import ProctoringLayer from '@/app/components/Proctoring/ProctoringLayer';
+import { useEffect, useState } from 'react';
 
 export default function CandidateRoom() {
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const roomId = Array.isArray(params.roomId) ? params.roomId[0] : params.roomId;
+  const [displayName, setDisplayName] = useState('Candidate');
+
+  useEffect(() => {
+    const n = searchParams.get('name');
+    if (n) setDisplayName(decodeURIComponent(n));
+  }, [searchParams]);
+
+
   return (
-    <Suspense fallback={
-      <div className="h-screen flex items-center justify-center bg-gray-900 text-white">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p>Joining interview room...</p>
-        </div>
-      </div>
-    }>
-      <CandidateRoomContent />
-    </Suspense>
+    <div style={{ position: 'relative', height: '100vh', width: '100vw' }}>
+      {roomId && <JitsiMeet roomName={roomId} displayName={displayName} />}
+      <ProctoringLayer roomId={roomId} candidateName={displayName} />
+    </div>
   );
 }
