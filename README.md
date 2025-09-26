@@ -74,7 +74,6 @@ Create a `.env.local` file in the root directory:
 ```env
 MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/<database-name>
 MONGODB_DB=proctoring_db
-NEXT_PUBLIC_JITSI_DOMAIN=meet.jit.si
 ```
 
 ### 4️⃣ Run development server
